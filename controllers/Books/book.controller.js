@@ -19,9 +19,6 @@ const createBook = async (req, res) => {
       req.body;
     const isbn = req.body.isbn.trim();
 
-    console.log("--ISBN---", isbn);
-    
-
     const isbnCheck = await Book.findOne({ where: { isbn } });
     if (isbnCheck) {
       return res.status(409).json({
@@ -156,7 +153,97 @@ const updateBook = async (req, res) => {
   }
 };
 
+const getBooks = async (req, res) => {
+  try {
+    const { search, available, sort } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+    let replacements = { limit, offset };
+
+    // Match title OR author
+    if (search) {
+      whereConditions.push("(title ILIKE :search OR author ILIKE :search)"); //for case insentive
+      replacements.search = `%${search.trim()}%`;
+    }
+
+    // Check if book is available
+    if (available === "true") {
+      whereConditions.push("available_copies > 0");
+    } else if (available === "false") {
+      whereConditions.push("available_copies = 0");
+    }
+
+    //Combing the where
+    const whereClause =
+      whereConditions.length > 0
+        ? `WHERE ${whereConditions.join(" AND ")}`
+        : "";
+
+    const sortOptions = {
+      title_asc: "title ASC",
+      title_desc: "title DESC",
+      author_asc: "author ASC",
+      author_desc: "author DESC",
+      newest: '"createdAt" DESC',
+      oldest: '"createdAt" ASC',
+    };
+
+    const orderBy = sortOptions[sort] || '"createdAt" DESC';
+
+
+    const books = await connectDB.query(
+      `SELECT 
+        id,
+        title,
+        author,
+        isbn,
+        language,
+        total_copies AS "totalCopies",
+        available_copies AS "availableCopies"
+       FROM books
+       ${whereClause}
+       ORDER BY ${orderBy}
+       LIMIT :limit OFFSET :offset`,
+      {
+        replacements,
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    const countResult = await connectDB.query(
+      `SELECT COUNT(*)::int AS total FROM books ${whereClause}`,
+      {
+        replacements,
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    const totalBooks = countResult[0].total;
+
+    return res.status(200).json({
+      success: true,
+      message: "Books fetched successfully",
+      page,
+      limit,
+      totalBooks,
+      totalPages: Math.ceil(totalBooks / limit),
+      data: books,
+    });
+  } catch (error) {
+    console.error("[getBooks Error]:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error at getBooks controller",
+      errors: "Internal Server Error",
+    });
+  }
+};
 module.exports = {
   createBook,
   updateBook,
+  getBooks,
 };

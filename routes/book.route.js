@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createBook,
   updateBook,
+  getBooks,
 } = require("../controllers/Books/book.controller");
 const {
   authMiddleware,
@@ -20,5 +21,6 @@ router.post(
 );
 
 router.patch("/:bookId", authMiddleware, authorizationMiddleware, updateBook);
+router.get("/", authMiddleware, getBooks);
 
 module.exports = router;
