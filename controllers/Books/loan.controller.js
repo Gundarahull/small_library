@@ -190,6 +190,7 @@ const returnBook = async (req, res) => {
     }
 
     loan.returned_at = now;
+    loan.late_fee = lateFee;
 
     await loan.save({ transaction: t });
 
@@ -218,7 +219,6 @@ const returnBook = async (req, res) => {
     });
   }
 };
-
 
 const getMyLoans = async (req, res) => {
   try {
@@ -266,7 +266,7 @@ const getMyLoans = async (req, res) => {
       {
         replacements,
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     return res.status(200).json({
@@ -285,9 +285,8 @@ const getMyLoans = async (req, res) => {
   }
 };
 
-
 module.exports = {
   loanBook,
   returnBook,
-  getMyLoans
+  getMyLoans,
 };

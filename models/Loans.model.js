@@ -44,6 +44,12 @@ const Loans = connectDB.define(
     },
 
     returned_at: { type: DataTypes.DATE },
+
+    late_fee: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   },
   { tableName: "loans", timestamps: true },
 );
