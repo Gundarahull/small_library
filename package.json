@@ -10,7 +10,8 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand --forceExit",
+    "test:watch": "jest --watch",
     "dev": "nodemon app.js"
   },
   "dependencies": {
@@ -24,5 +25,10 @@
     "nodemon": "^3.1.14",
     "pg": "^8.23.1",
     "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "sequelize-cli": "^6.6.5",
+    "supertest": "^7.3.2"
   }
 }
