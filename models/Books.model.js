@@ -2,7 +2,7 @@
 const { DataTypes } = require('sequelize');
 const connectDB = require("../config/db");
 
-const Book = connectDB.define('Book', {
+const Book = connectDB.define('books', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -37,7 +37,7 @@ const Book = connectDB.define('Book', {
     defaultValue: 'English',
   },
 }, {
-  tableName: 'Books',
+  tableName: 'books',
   timestamps: true,
 });
 

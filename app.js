@@ -10,6 +10,7 @@ app.use(express.urlencoded({ extended: true })); //to parse the request form dat
 
 //routes
 app.use("/auth", require("./routes/member.routes"));
+app.use("/books", require("./routes/book.route"));
 
 connectDB
   .authenticate()

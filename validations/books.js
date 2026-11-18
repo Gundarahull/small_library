@@ -15,7 +15,7 @@ const validateCreateBook = [
     .isLength({ min: 1 })
     .withMessage("Please Enter Atleast one Copy"),
 
-  body("langugae").notEmpty().withMessage("Please Enter the Book Langugae"),
+  body("language").notEmpty().withMessage("Please Enter the Book language"),
 ];
 
-module.exports = validateMemberRegister;
+module.exports = validateCreateBook;

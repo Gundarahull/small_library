@@ -2,11 +2,17 @@ const jwt = require("jsonwebtoken");
 const authMiddleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
-    console.log("--token--", token);
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "JWT token is Missed",
+        errors: "UnAuthorized",
+      });
+    }
 
     const isVerified = jwt.verify(token, process.env.SECRET_KEY);
 
-    console.log("--isverifeied---", isVerified);
 
     if (!isVerified) {
       return res.status(401).json({
