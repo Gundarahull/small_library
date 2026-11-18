@@ -1,8 +1,25 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
+const isTestEnvironment = process.env.NODE_ENV === "test";
+if (isTestEnvironment) {
+  require("dotenv").config({ path: ".env.test", override: true });
+}
+
+const databaseName = isTestEnvironment
+  ? process.env.DB_TEST_NAME
+  : process.env.DB_NAME;
+
+if (!databaseName) {
+  throw new Error(
+    isTestEnvironment
+      ? "DB_TEST_NAME must be set in .env.test before running tests."
+      : "DB_NAME must be set in .env.",
+  );
+}
+
 const connectDB = new Sequelize(
-  process.env.DB_NAME,
+  databaseName,
   process.env.DB_USER,
   process.env.DB_PASSWORD,
   {

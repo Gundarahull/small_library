@@ -24,6 +24,10 @@ connectDB
     console.log("Error while connecting to the Postgre : ", err);
   });
 
-app.listen(PORT, () => {
-  console.log(`Server Started at PORT : ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server Started at PORT : ${PORT}`);
+  });
+}
+
+module.exports = app;
