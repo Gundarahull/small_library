@@ -56,7 +56,30 @@ const authorizationMiddleware = async (req, res, next) => {
   }
 };
 
+const authorizationMemberMiddleware = async (req, res, next) => {
+  try {
+    const role = req.member.role;
+    if (role !== "member") {
+      return res.status(403).json({
+        success: false,
+        message: "Your not allowed to perform this Action",
+        errors: "Forbidden",
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error("[authorizationMiddleware Error]:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error at AuthorizationMiddleware",
+      errors: error,
+    });
+  }
+};
+
 module.exports = {
   authMiddleware,
   authorizationMiddleware,
+  authorizationMemberMiddleware
 };
