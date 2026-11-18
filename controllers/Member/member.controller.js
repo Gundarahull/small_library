@@ -96,7 +96,7 @@ const login = async (req, res) => {
     const isPassword = await bcrypt.compare(password, emailCheck.password_hash);
 
     if (!isPassword) {
-      return res.status(403).json({
+      return res.status(401).json({
         success: false,
         message: "Password Inccorect",
         errors: "UnAuthorized",
