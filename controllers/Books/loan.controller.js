@@ -2,6 +2,7 @@ const { QueryTypes } = require("sequelize");
 const connectDB = require("../../config/db");
 const Book = require("../../models/Books.model");
 const Loans = require("../../models/Loans.model");
+const Reservations = require("../../models/Reservations.model");
 
 const loanBook = async (req, res) => {
   const t = await connectDB.transaction();
@@ -194,8 +195,27 @@ const returnBook = async (req, res) => {
 
     await loan.save({ transaction: t });
 
-    book.available_copies += 1;
-    await book.save({ transaction: t });
+    const nextInLine = await Reservations.findOne({
+      where: {
+        book_id: book.id,
+        status: "waiting",
+      },
+      order: [["createdAt", "ASC"]], // FIFO: Oldest reservation first
+      transaction: t,
+      lock: t.LOCK.UPDATE,
+    });
+
+    if (nextInLine) {
+      const holdUntil = new Date();
+      holdUntil.setHours(holdUntil.getHours() + 48); // 48-hour VIP window
+
+      nextInLine.status = "held";
+      nextInLine.hold_expires_at = holdUntil;
+      await nextInLine.save({ transaction: t });
+    } else {
+      book.available_copies += 1;
+      await book.save({ transaction: t });
+    }
 
     await t.commit();
 

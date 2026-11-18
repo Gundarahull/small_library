@@ -7,8 +7,12 @@ const {
 const {
   authMiddleware,
   authorizationMiddleware,
+  authorizationMemberMiddleware,
 } = require("../middleware/auth.middleware");
 const validateCreateBook = require("../validations/books");
+const {
+  createReservation,
+} = require("../controllers/Books/reservations.controller");
 
 const router = express.Router();
 
@@ -22,5 +26,12 @@ router.post(
 
 router.patch("/:bookId", authMiddleware, authorizationMiddleware, updateBook);
 router.get("/", authMiddleware, getBooks);
+
+router.post(
+  "/:id/reservations",
+  authMiddleware,
+  authorizationMemberMiddleware,
+  createReservation,
+);
 
 module.exports = router;
