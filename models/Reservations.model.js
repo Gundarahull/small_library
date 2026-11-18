@@ -34,9 +34,19 @@ const Reservations = connectDB.define(
       onDelete: "RESTRICT",
     },
     status: {
-      type: DataTypes.ENUM("pending", "returned", "cancelled"),
+      type: DataTypes.ENUM(
+        "waiting",
+        "held",
+        "fulfilled",
+        "cancelled",
+        "expired",
+      ),
       allowNull: false,
-      defaultValue: "pending",
+      defaultValue: "waiting",
+    },
+    hold_expires_at: {
+      type:  DataTypes.DATE,
+      allowNull: true,
     },
   },
   { tableName: "reservations", timestamps: true },
