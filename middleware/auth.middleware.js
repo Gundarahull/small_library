@@ -1,7 +1,16 @@
 const jwt = require("jsonwebtoken");
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
+    const authorization = req.headers.authorization;
+    if (!authorization || !authorization.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "JWT token is Missed",
+        errors: "UnAuthorized",
+      });
+    }
+
+    const token = authorization.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({
@@ -26,10 +35,10 @@ const authMiddleware = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("[AuthMiddleware Error]:", error);
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: "Error at AuthMiddleware",
-      errors: error,
+      message: "JWT token is malformed",
+      errors: "UnAuthorized",
     });
   }
 };

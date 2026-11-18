@@ -13,9 +13,7 @@ const Loans = connectDB.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: {
-          name: "members",
-        },
+        model: "members",
         key: "id",
       },
       onUpdate: "CASCADE",
@@ -25,9 +23,7 @@ const Loans = connectDB.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: {
-          name: "books",
-        },
+        model: "books",
         key: "id",
       },
       onUpdate: "CASCADE",
